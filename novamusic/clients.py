@@ -31,3 +31,10 @@ assistant = Client(
 async def start_clients() -> None:
     await bot.start()
     await assistant.start()
+    try:
+        me_bot = await bot.get_me()
+        me_assistant = await assistant.get_me()
+        print(f"[Nova] Bot: @{getattr(me_bot, 'username', None)} id={me_bot.id}")
+        print(f"[Nova] Assistant: @{getattr(me_assistant, 'username', None)} id={me_assistant.id}")
+    except Exception as e:
+        print(f"[Nova][WARN] Could not fetch identities: {e}")

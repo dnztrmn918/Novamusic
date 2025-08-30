@@ -24,6 +24,7 @@ sudo = filters.create(sudo_filter)
 def register_handlers() -> None:
     @bot.on_message(filters.command(["ping"], prefixes=["/", ".", "!", ""]))
     async def ping_handler(_, message: Message):
+        print(f"[Nova][HANDLER] /ping from={getattr(message.from_user,'id',None)} chat={message.chat.id}")
         await message.reply_text("pong")
 
     # Debug logging; disable with DEBUG_LOG=0
@@ -37,6 +38,7 @@ def register_handlers() -> None:
                 pass
     @bot.on_message(filters.command(["start"], prefixes=["/", ".", "!", ""]))
     async def start_handler(_, message: Message):
+        print(f"[Nova][HANDLER] /start from={getattr(message.from_user,'id',None)} chat={message.chat.id}")
         username = "Novamusice_bot"
         buttons = [
             [InlineKeyboardButton("➕ Beni Gruba Ekle", url=f"https://t.me/{username}?startgroup=true")],
@@ -56,6 +58,7 @@ def register_handlers() -> None:
     # Fallback for private chats without slash commands
     @bot.on_message(filters.private & filters.text)
     async def fallback_private(_, message: Message):
+        print(f"[Nova][HANDLER] fallback_private text={text!r} from={getattr(message.from_user,'id',None)} chat={message.chat.id}")
         text = (message.text or "").strip().lstrip("/").lower()
         if text == "ping":
             return await message.reply_text("pong")
@@ -68,6 +71,7 @@ def register_handlers() -> None:
 
     @bot.on_message(filters.command(["play"], prefixes=["/", ".", "!", ""]) & filters.group)
     async def play_handler(_, message: Message):
+        print(f"[Nova][HANDLER] /play from={getattr(message.from_user,'id',None)} chat={message.chat.id}")
         # 1) Reply ile gelen medya
         if message.reply_to_message and (
             message.reply_to_message.audio or message.reply_to_message.voice
@@ -96,21 +100,25 @@ def register_handlers() -> None:
 
     @bot.on_message(filters.command(["pause"], prefixes=["/", ".", "!", ""]) & filters.group)
     async def pause_handler(_, message: Message):
+        print(f"[Nova][HANDLER] /pause from={getattr(message.from_user,'id',None)} chat={message.chat.id}")
         await player.pause(message.chat.id)
         await message.reply_text("⏸️ Duraklatıldı")
 
     @bot.on_message(filters.command(["resume"], prefixes=["/", ".", "!", ""]) & filters.group)
     async def resume_handler(_, message: Message):
+        print(f"[Nova][HANDLER] /resume from={getattr(message.from_user,'id',None)} chat={message.chat.id}")
         await player.resume(message.chat.id)
         await message.reply_text("▶️ Devam ediyor")
 
     @bot.on_message(filters.command(["stop"], prefixes=["/", ".", "!", ""]) & filters.group)
     async def stop_handler(_, message: Message):
+        print(f"[Nova][HANDLER] /stop from={getattr(message.from_user,'id',None)} chat={message.chat.id}")
         await player.stop(message.chat.id)
         await message.reply_text("🛑 Yayın bitti")
 
     @bot.on_message(filters.command(["queue"], prefixes=["/", ".", "!", ""]) & filters.group)
     async def queue_handler(_, message: Message):
+        print(f"[Nova][HANDLER] /queue from={getattr(message.from_user,'id',None)} chat={message.chat.id}")
         q = player.queues.get(message.chat.id, [])
         if not q:
             return await message.reply_text("Kuyruk boş.")
@@ -118,6 +126,7 @@ def register_handlers() -> None:
 
     @bot.on_message(filters.command(["broadcast"], prefixes=["/", ".", "!", ""]) & sudo)
     async def broadcast_handler(_, message: Message):
+        print(f"[Nova][HANDLER] /broadcast from={getattr(message.from_user,'id',None)} chat={message.chat.id}")
         if not message.reply_to_message or not (message.reply_to_message.text or message.reply_to_message.photo):
             return await message.reply_text("Yayınlamak için bir metin/medya mesajına yanıt verin.")
         text = message.reply_to_message.text or message.reply_to_message.caption or ""
