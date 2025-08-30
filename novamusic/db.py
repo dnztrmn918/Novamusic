@@ -13,7 +13,14 @@ async def init_db() -> None:
     if not mongo_uri:
         return
     _client = AsyncIOMotorClient(mongo_uri)
-    db = _client.get_default_database() if "+srv" in mongo_uri else _client[os.getenv("MONGO_DB_NAME", "novamusic")] 
+    if "+srv" in mongo_uri:
+        try:
+            db = _client.get_default_database()
+        except Exception:
+            db_name = os.getenv("MONGO_DB_NAME", "novamusic")
+            db = _client[db_name]
+    else:
+        db = _client[os.getenv("MONGO_DB_NAME", "novamusic")]
 
 
 # SUDOERS
