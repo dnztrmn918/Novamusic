@@ -52,6 +52,15 @@ def register_handlers() -> None:
         if message.chat and message.chat.type.name == "PRIVATE":
             pass
 
+    # Fallback for private chats without slash commands
+    @bot.on_message(filters.private & filters.text)
+    async def fallback_private(_, message: Message):
+        text = (message.text or "").strip().lstrip("/").lower()
+        if text == "ping":
+            return await message.reply_text("pong")
+        if text == "start":
+            return await start_handler(_, message)
+
     @bot.on_callback_query(filters.regex("^official_channel$"))
     async def channel_placeholder_cb(_, cq: CallbackQuery):
         await cq.answer("Resmi kanal yakında eklenecek.", show_alert=True)
