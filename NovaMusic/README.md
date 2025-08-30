@@ -29,6 +29,13 @@ pip install -r requirements.txt
 python -m novamusic.run
 ```
 
+## Heroku Deploy
+1) Bu klasörde bir repo oluşturup GitHub'a push edin
+2) Heroku Dashboard > Create App > Deploy via GitHub
+3) Config Vars içine `.env.example` değişkenlerini girin
+4) Dyno type: worker (Procfile hazır)
+5) Deploy'u başlatın
+
 ## Yapı
 ```
 novamusic/
