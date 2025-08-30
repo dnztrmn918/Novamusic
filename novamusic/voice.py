@@ -1,8 +1,7 @@
 from typing import Dict, Deque
 from collections import deque
 
-from py_tgcalls import PyTgCalls
-from py_tgcalls.types.input_stream import InputStream, AudioPiped
+from pytgcalls import PyTgCalls
 
 from .clients import assistant
 
@@ -24,21 +23,18 @@ class Player:
         q = self.get_queue(chat_id)
         if not q:
             q.append(file_path)
-            await self.tgcalls.join_group_call(
-                chat_id,
-                InputStream(AudioPiped(file_path)),
-            )
+            await self.tgcalls.play(chat_id, file_path)
         else:
             q.append(file_path)
 
     async def pause(self, chat_id: int) -> None:
-        await self.tgcalls.pause_stream(chat_id)
+        await self.tgcalls.pause(chat_id)
 
     async def resume(self, chat_id: int) -> None:
-        await self.tgcalls.resume_stream(chat_id)
+        await self.tgcalls.resume(chat_id)
 
     async def stop(self, chat_id: int) -> None:
-        await self.tgcalls.leave_group_call(chat_id)
+        await self.tgcalls.leave_call(chat_id)
         self.queues.pop(chat_id, None)
 
 
