@@ -9,7 +9,7 @@ async def main() -> None:
     await init_db()
     await start_clients()
     register_handlers()
-    print("[Nova] Bot ve Asistan başlatıldı. Ctrl+C ile durdurabilirsiniz.")
+    print("[Nova] Bot ve Asistan başlatıldı. Handlers kaydedildi. Ctrl+C ile durdurabilirsiniz.")
     try:
         await asyncio.Event().wait()
     except KeyboardInterrupt:

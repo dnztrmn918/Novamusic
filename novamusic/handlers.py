@@ -22,6 +22,18 @@ sudo = filters.create(sudo_filter)
 
 
 def register_handlers() -> None:
+    @bot.on_message(filters.command(["ping"]))
+    async def ping_handler(_, message: Message):
+        await message.reply_text("pong")
+
+    # Optional debug logging; enable with DEBUG_LOG=1
+    @bot.on_message()
+    async def debug_any(_, message: Message):
+        if os.getenv("DEBUG_LOG") == "1":
+            try:
+                print(f"[Nova][DBG] msg chat={message.chat.id} from={getattr(message.from_user,'id',None)} text={getattr(message,'text',None)!r}")
+            except Exception:
+                pass
     @bot.on_message(filters.command(["start"]))
     async def start_handler(_, message: Message):
         username = "Novamusice_bot"
