@@ -3,7 +3,7 @@ import asyncio
 from typing import List
 
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 from .clients import bot
 from .voice import player
@@ -22,7 +22,23 @@ sudo = filters.create(sudo_filter)
 def register_handlers() -> None:
     @bot.on_message(filters.command(["start"]))
     async def start_handler(_, message: Message):
-        await message.reply_text("👋 Nova Music hazır. Komutlar: /play, /pause, /resume, /stop, /queue, /broadcast (sudo)")
+        username = "Novamusice_bot"
+        buttons = [
+            [InlineKeyboardButton("➕ Beni Gruba Ekle", url=f"https://t.me/{username}?startgroup=true")],
+            [
+                InlineKeyboardButton("💬 Sohbet Grubu", url="https://t.me/sohbetgo_tr"),
+                InlineKeyboardButton("📣 Resmi Kanal", callback_data="official_channel")
+            ],
+            [InlineKeyboardButton("👤 Yapımcı", url="https://t.me/dnztrmnn")],
+        ]
+        await message.reply_text(
+            "👋 Nova Music'e hoş geldin! Aşağıdaki menüyü kullanabilirsin:",
+            reply_markup=InlineKeyboardMarkup(buttons),
+        )
+
+    @bot.on_callback_query(filters.regex("^official_channel$"))
+    async def channel_placeholder_cb(_, cq: CallbackQuery):
+        await cq.answer("Resmi kanal yakında eklenecek.", show_alert=True)
 
     @bot.on_message(filters.command(["play"]) & filters.group)
     async def play_handler(_, message: Message):
