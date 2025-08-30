@@ -1,0 +1,17 @@
+{
+  "name": "NovaMusic",
+  "description": "Minimal Telegram voice chat music bot (Pyrogram + PyTgCalls)",
+  "repository": "",
+  "env": {
+    "API_ID": {"description": "Telegram API ID", "required": true},
+    "API_HASH": {"description": "Telegram API HASH", "required": true},
+    "BOT_TOKEN": {"description": "Bot Token", "required": true},
+    "STRING_SESSION": {"description": "Assistant session string", "required": true},
+    "SUDO_IDS": {"description": "Space separated user IDs", "required": true},
+    "MONGO_DB_URI": {"description": "Mongo connection string", "required": false},
+    "MONGO_DB_NAME": {"description": "Mongo database name", "required": false, "value": "novamusic"}
+  },
+  "buildpacks": [
+    {"url": "heroku/python"}
+  ]
+}
