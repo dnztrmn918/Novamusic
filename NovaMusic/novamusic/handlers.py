@@ -6,6 +6,7 @@ from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 from .clients import bot
+from .db import add_served_chat, get_served_chats, get_sudoers
 from .voice import player
 
 
@@ -35,6 +36,8 @@ def register_handlers() -> None:
             "👋 Nova Music'e hoş geldin! Aşağıdaki menüyü kullanabilirsin:",
             reply_markup=InlineKeyboardMarkup(buttons),
         )
+        if message.chat and message.chat.type.name == "PRIVATE":
+            pass
 
     @bot.on_callback_query(filters.regex("^official_channel$"))
     async def channel_placeholder_cb(_, cq: CallbackQuery):
@@ -50,6 +53,7 @@ def register_handlers() -> None:
         file_path = await bot.download_media(media)
         await player.start()
         await player.play(message.chat.id, file_path)
+        await add_served_chat(message.chat.id)
         await message.reply_text("▶️ Çalma kuyruğa alındı veya başlatıldı.")
 
     @bot.on_message(filters.command(["pause"]) & filters.group)
@@ -80,15 +84,15 @@ def register_handlers() -> None:
             return await message.reply_text("Yayınlamak için bir metin/medya mesajına yanıt verin.")
         text = message.reply_to_message.text or message.reply_to_message.caption or ""
         count = 0
-        async for dialog in bot.get_dialogs():
+        for chat_id in await get_served_chats():
             try:
                 if message.reply_to_message.photo:
                     photo = message.reply_to_message.photo.file_id
-                    await bot.send_photo(dialog.chat.id, photo=photo, caption=text)
+                    await bot.send_photo(chat_id, photo=photo, caption=text)
                 else:
-                    await bot.send_message(dialog.chat.id, text=text)
+                    await bot.send_message(chat_id, text=text)
                 count += 1
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(0.05)
             except Exception:
                 continue
         await message.reply_text(f"Yayın tamamlandı. Gönderildi: {count}")
