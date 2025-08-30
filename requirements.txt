@@ -6,3 +6,4 @@ python-dotenv
 motor
 yt-dlp
 youtube-search-python
+hydrogram>=0.2.0
