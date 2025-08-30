@@ -22,19 +22,20 @@ sudo = filters.create(sudo_filter)
 
 
 def register_handlers() -> None:
-    @bot.on_message(filters.command(["ping"], prefixes=["/", ""]))
+    @bot.on_message(filters.command(["ping"], prefixes=["/", ".", "!", ""]))
     async def ping_handler(_, message: Message):
         await message.reply_text("pong")
 
-    # Optional debug logging; enable with DEBUG_LOG=1
+    # Debug logging; disable with DEBUG_LOG=0
     @bot.on_message()
     async def debug_any(_, message: Message):
-        if os.getenv("DEBUG_LOG") == "1":
+        # default on unless explicitly set to 0
+        if os.getenv("DEBUG_LOG", "1") != "0":
             try:
                 print(f"[Nova][DBG] msg chat={message.chat.id} from={getattr(message.from_user,'id',None)} text={getattr(message,'text',None)!r}")
             except Exception:
                 pass
-    @bot.on_message(filters.command(["start"], prefixes=["/", ""]))
+    @bot.on_message(filters.command(["start"], prefixes=["/", ".", "!", ""]))
     async def start_handler(_, message: Message):
         username = "Novamusice_bot"
         buttons = [
@@ -65,7 +66,7 @@ def register_handlers() -> None:
     async def channel_placeholder_cb(_, cq: CallbackQuery):
         await cq.answer("Resmi kanal yakında eklenecek.", show_alert=True)
 
-    @bot.on_message(filters.command(["play"], prefixes=["/", ""]) & filters.group)
+    @bot.on_message(filters.command(["play"], prefixes=["/", ".", "!", ""]) & filters.group)
     async def play_handler(_, message: Message):
         # 1) Reply ile gelen medya
         if message.reply_to_message and (
@@ -93,29 +94,29 @@ def register_handlers() -> None:
         await add_served_chat(message.chat.id)
         await message.reply_text("▶️ Çalma kuyruğa alındı veya başlatıldı.")
 
-    @bot.on_message(filters.command(["pause"], prefixes=["/", ""]) & filters.group)
+    @bot.on_message(filters.command(["pause"], prefixes=["/", ".", "!", ""]) & filters.group)
     async def pause_handler(_, message: Message):
         await player.pause(message.chat.id)
         await message.reply_text("⏸️ Duraklatıldı")
 
-    @bot.on_message(filters.command(["resume"], prefixes=["/", ""]) & filters.group)
+    @bot.on_message(filters.command(["resume"], prefixes=["/", ".", "!", ""]) & filters.group)
     async def resume_handler(_, message: Message):
         await player.resume(message.chat.id)
         await message.reply_text("▶️ Devam ediyor")
 
-    @bot.on_message(filters.command(["stop"], prefixes=["/", ""]) & filters.group)
+    @bot.on_message(filters.command(["stop"], prefixes=["/", ".", "!", ""]) & filters.group)
     async def stop_handler(_, message: Message):
         await player.stop(message.chat.id)
         await message.reply_text("🛑 Yayın bitti")
 
-    @bot.on_message(filters.command(["queue"], prefixes=["/", ""]) & filters.group)
+    @bot.on_message(filters.command(["queue"], prefixes=["/", ".", "!", ""]) & filters.group)
     async def queue_handler(_, message: Message):
         q = player.queues.get(message.chat.id, [])
         if not q:
             return await message.reply_text("Kuyruk boş.")
         await message.reply_text("Kuyruk:\n" + "\n".join(f"- {os.path.basename(p)}" for p in q))
 
-    @bot.on_message(filters.command(["broadcast"], prefixes=["/", ""]) & sudo)
+    @bot.on_message(filters.command(["broadcast"], prefixes=["/", ".", "!", ""]) & sudo)
     async def broadcast_handler(_, message: Message):
         if not message.reply_to_message or not (message.reply_to_message.text or message.reply_to_message.photo):
             return await message.reply_text("Yayınlamak için bir metin/medya mesajına yanıt verin.")
