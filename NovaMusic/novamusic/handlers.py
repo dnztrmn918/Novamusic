@@ -8,6 +8,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from .clients import bot
 from .db import add_served_chat, get_served_chats, get_sudoers
 from .voice import player
+from .search import search_youtube, download_audio
 
 
 SUDO_IDS: List[int] = [int(x) for x in os.getenv("SUDO_IDS", "").split() if x.isdigit()]
@@ -45,12 +46,27 @@ def register_handlers() -> None:
 
     @bot.on_message(filters.command(["play"]) & filters.group)
     async def play_handler(_, message: Message):
-        if not message.reply_to_message or not (
+        # 1) Reply ile gelen medya
+        if message.reply_to_message and (
             message.reply_to_message.audio or message.reply_to_message.voice
         ):
-            return await message.reply_text("Lütfen bir ses mesajına/şarkıya yanıt verin.")
-        media = message.reply_to_message.audio or message.reply_to_message.voice
-        file_path = await bot.download_media(media)
+            media = message.reply_to_message.audio or message.reply_to_message.voice
+            file_path = await bot.download_media(media)
+        # 2) /play <query> ile arama/indirme
+        elif len(message.command) > 1:
+            query = message.text.split(None, 1)[1].strip()
+            await message.reply_chat_action("typing")
+            try:
+                title, url = await search_youtube(query)
+            except Exception as e:
+                return await message.reply_text(f"Arama hatası: {e}")
+            await message.reply_text(f"🔎 Bulundu: {title}\n⬇️ İndiriliyor...")
+            try:
+                file_path = await download_audio(url)
+            except Exception as e:
+                return await message.reply_text(f"İndirme hatası: {e}")
+        else:
+            return await message.reply_text("Kullanım: Bir ses mesajına yanıt verin veya /play <şarkı adı> yazın.")
         await player.start()
         await player.play(message.chat.id, file_path)
         await add_served_chat(message.chat.id)
