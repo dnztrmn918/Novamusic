@@ -2,8 +2,8 @@ import os
 import asyncio
 from typing import List
 
-from pyrogram import filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from hydrogram import filters
+from hydrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 from .clients import bot
 from .db import add_served_chat, get_served_chats, get_sudoers

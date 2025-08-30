@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
-from pyrogram import Client
-from pyrogram.enums import ParseMode
+from hydrogram import Client
+from hydrogram.enums import ParseMode
 
 load_dotenv()
 
