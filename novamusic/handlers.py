@@ -58,8 +58,8 @@ def register_handlers() -> None:
     # Fallback for private chats without slash commands
     @bot.on_message(filters.private & filters.text)
     async def fallback_private(_, message: Message):
-        print(f"[Nova][HANDLER] fallback_private text={text!r} from={getattr(message.from_user,'id',None)} chat={message.chat.id}")
         text = (message.text or "").strip().lstrip("/").lower()
+        print(f"[Nova][HANDLER] fallback_private text={text!r} from={getattr(message.from_user,'id',None)} chat={message.chat.id}")
         if text == "ping":
             return await message.reply_text("pong")
         if text == "start":
