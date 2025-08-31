@@ -17,6 +17,7 @@ bot = Client(
     bot_token=BOT_TOKEN,
     parse_mode=ParseMode.HTML,
     in_memory=True,
+    no_updates=False,
 )
 
 assistant = Client(
@@ -26,6 +27,7 @@ assistant = Client(
     session_string=STRING_SESSION or None,
     parse_mode=ParseMode.HTML,
     in_memory=True,
+    no_updates=False,
 )
 
 async def start_clients() -> None:
